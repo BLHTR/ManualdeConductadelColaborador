@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso BlatoRH Group - Manual de Conducta del Colaborador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(251, 191, 36, 0.5); }
+            50% { transform: scale(1.03); box-shadow: 0 0 24px rgba(251, 191, 36, 0.8); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a192f;
+            color: #e6f1ff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .app-container {
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            background-color: rgba(17, 34, 64, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(136, 146, 176, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .btn { @apply font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900; }
+        .btn-primary { @apply bg-amber-400 text-slate-900 hover:bg-amber-300 focus:ring-amber-400 shadow-lg shadow-amber-500/20; }
+        .btn-primary:disabled { @apply bg-amber-800 text-slate-400 cursor-not-allowed transform-none shadow-none; }
+        .btn-secondary { @apply bg-slate-700 text-white hover:bg-slate-600 focus:ring-slate-500; }
+        .pulsing-button { animation: pulse-glow 2.5s infinite ease-in-out; }
+        .input-field {
+            background-color: #1e293b;
+            border: 2px solid #334155;
+            color: #e2e8f0;
+            @apply mt-2 block w-full px-4 py-3 rounded-lg shadow-sm transition-all duration-300;
+        }
+        .input-field:focus { @apply outline-none ring-2 ring-amber-400 border-amber-400 bg-slate-900; }
+        .progress-bar-container { @apply w-full bg-slate-700 rounded-full h-3 overflow-hidden; }
+        .progress-bar { @apply bg-amber-400 h-3 rounded-full transition-all duration-500 ease-out; }
+        #chapter-content { max-height: 55vh; overflow-y: auto; padding-right: 1rem; scroll-behavior: smooth; }
+        #chapter-content::-webkit-scrollbar { width: 8px; }
+        #chapter-content::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
+        #chapter-content::-webkit-scrollbar-thumb { background: #fbbF24; border-radius: 10px; }
+        #chapter-content::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+        .quiz-option {
+            background-color: #1e293b;
+            border: 2px solid #334155;
+            @apply flex items-center w-full text-left p-4 rounded-lg cursor-pointer hover:bg-slate-700 hover:border-amber-400 transition-all duration-200 transform hover:scale-102;
+        }
+        .quiz-option.selected { border-color: #fbbF24; background-color: #334155; transform: scale(1.02); }
+        .hidden { display: none; }
+        .screen { width: 100%; }
+
+        /* New Login Screen Styles */
+        .login-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            min-height: 100vh;
+        }
+        @media (min-width: 1024px) {
+            .login-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .login-promo {
+            background: linear-gradient(-45deg, #0a192f, #172a46, #4a0e99, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            padding: 2rem;
+        }
+
+        /* Diploma Styles */
+        #diploma-content {
+            background-color: #fdfbf4;
+            color: #3a2d0d;
+            border: 10px solid #c5a358;
+            padding: 2rem;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-48 0c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48-25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z" fill="%23d4b979" fill-opacity="0.1"/%3E%3C/svg%3E');
+        }
+        .diploma-title { font-family: 'Playfair Display', serif; color: #8c6b22; }
+        .diploma-text { font-family: 'Merriweather', serif; }
+        .diploma-seal {
+            position: absolute;
+            bottom: 3.5rem;
+            right: 2.5rem;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(ellipse at center, #d4af37 0%,#b48811 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5), inset 0 0 5px rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .diploma-seal-inner {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+        }
+        .signature-line {
+            border-top: 2px solid #8c6b22;
+            width: 250px;
+            margin-top: 3rem;
+        }
+        .signature-text { font-family: 'Merriweather', serif; font-style: italic; }
+    </style>
+</head>
+<body class="antialiased">
+    
+    <header id="app-header" class="w-full max-w-5xl mx-auto p-4 md:p-6 hidden">
+        <div class="flex items-center space-x-3">
+            <svg class="h-10 w-10 text-amber-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z" />
+            </svg>
+            <span class="text-2xl font-bold text-white">BlatoRH Group</span>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <div class="main-content-area w-full">
+
+            <div id="diploma-loading" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
+                <div class="text-center p-6 bg-slate-800 rounded-xl">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mx-auto mb-4"></div>
+                    <p class="text-white">Generando diploma...</p>
+                </div>
+            </div>
+
+            <div id="message-box" class="fixed top-5 left-1/2 -translate-x-1/2 mt-4 p-4 rounded-lg shadow-lg text-white z-50 hidden" role="alert">
+                <span id="message-text"></span>
+                <button onclick="document.getElementById('message-box').classList.add('hidden')" class="ml-4 font-bold">&times;</button>
+            </div>
+
+            <div id="login-screen" class="screen w-full min-h-screen">
+                <div class="login-grid">
+                    <div class="login-promo hidden lg:flex flex-col justify-center items-start p-12">
+                         <img src="https://raw.githubusercontent.com/BLHTR/CursoSeguridad/main/blatorh.png" alt="BlatoRH Logo" class="h-16 w-auto mb-8" onerror="this.src='https://placehold.co/200x64/FFFFFF/0a192f?text=BlatoRH'; this.onerror=null;">
+                        <h1 id="login-course-title" class="text-5xl font-bold text-white leading-tight mt-4"></h1>
+                        <p class="text-slate-300 mt-4 text-lg">La conducta y la ética profesional son pilares fundamentales en nuestra cultura. Este curso te guiará a través de nuestro manual de conducta.</p>
+                    </div>
+                    <div class="flex flex-col justify-center items-center p-8 bg-slate-900/50">
+                        <div class="w-full max-w-md">
+                             <div class="text-center lg:hidden mb-8">
+                                <h2 class="text-3xl md:text-4xl font-bold text-white">BlatoRH Group</h2>
+                                <p id="login-course-title-mobile" class="mt-2 text-slate-300"></p>
+                            </div>
+                            <p class="text-center text-slate-300 mb-2">Ingresa tus datos para comenzar.</p>
+                            <div class="text-center mb-6">
+                                <div class="inline-flex items-center bg-slate-800/50 px-3 py-1.5 rounded-full text-sm">
+                                    <svg class="w-5 h-5 mr-2 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                                    <span id="course-duration-estimate"></span>
+                                </div>
+                            </div>
+                            <form id="login-form" class="space-y-6">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-slate-300">Nombre</label>
+                                    <input type="text" id="name" class="input-field" required>
+                                </div>
+                                <div>
+                                    <label for="surname" class="block text-sm font-medium text-slate-300">Apellido</label>
+                                    <input type="text" id="surname" class="input-field" required>
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-slate-300">Email Corporativo</label>
+                                    <input type="email" id="email" class="input-field" required pattern=".*@blatorh\.com$">
+                                </div>
+                                <button type="submit" id="login-submit-btn" class="btn btn-primary w-full !mt-8 pulsing-button">
+                                    <span class="btn-text">Ingresar al Curso</span>
+                                    <span class="btn-loader hidden animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-slate-900 mx-auto"></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="course-screen" class="card screen hidden w-full max-w-3xl mx-auto p-6 md:p-8">
+                <div class="mb-6">
+                    <p id="chapter-number" class="text-amber-400 font-semibold"></p>
+                    <h2 id="chapter-title" class="text-3xl md:text-4xl font-bold mt-1"></h2>
+                </div>
+                <div class="progress-bar-container mb-6">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <div id="chapter-content" class="prose prose-invert max-w-none text-slate-300 text-lg leading-relaxed"></div>
+                <div class="flex flex-col sm:flex-row justify-between items-center mt-8 border-t border-slate-700 pt-6 space-y-4 sm:space-y-0">
+                    <button id="listen-btn" class="btn btn-secondary w-full sm:w-auto">Escuchar Audio</button>
+                    <button id="next-btn" class="btn btn-primary w-full sm:w-auto" disabled>Siguiente</button>
+                </div>
+            </div>
+
+            <div id="quiz-screen" class="card screen hidden w-full max-w-2xl mx-auto p-6 md:p-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold">Evaluación Final</h2>
+                    <p class="text-slate-300 mt-1">Demuestra lo que has aprendido.</p>
+                </div>
+                <div class="progress-bar-container my-6">
+                    <div id="quiz-progress-bar" class="progress-bar"></div>
+                </div>
+                <div id="quiz-content" class="min-h-[30vh]"></div>
+                <div id="quiz-navigation" class="flex justify-between items-center mt-8">
+                    <button id="prev-question-btn" class="btn btn-secondary">Anterior</button>
+                    <button id="next-question-btn" class="btn btn-primary">Siguiente</button>
+                </div>
+                 <button id="submit-quiz-btn" class="btn btn-primary w-full mt-8 hidden">Finalizar y Ver Resultados</button>
+            </div>
+            
+            <div id="result-screen" class="card screen hidden text-center w-full max-w-md mx-auto p-6 md:p-8">
+                 <h2 class="text-3xl font-bold mb-4">Resultados</h2>
+                 <p class="text-6xl font-bold mb-4" id="result-score"></p>
+                 <p class="text-xl mb-8" id="result-message"></p>
+                 <div id="result-summary" class="space-y-2 text-left max-w-md mx-auto mb-8"></div>
+                 <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button id="restart-quiz-btn" class="btn btn-secondary">Reintentar</button>
+                    <button id="diploma-btn" class="btn btn-primary hidden">Ver Diploma</button>
+                 </div>
+            </div>
+
+            <div id="diploma-screen" class="card screen hidden w-full max-w-4xl mx-auto p-6 md:p-8">
+                <h2 class="text-3xl font-bold mb-6 text-center">¡Felicitaciones, has completado el curso!</h2>
+                <div id="diploma-content-wrapper" class="p-2 bg-slate-800 rounded-lg">
+                    <div id="diploma-content" class="pb-20">
+                        <div class="text-center">
+                            <p class="diploma-text text-xl">Certificado de Finalización</p>
+                            <h1 class="diploma-title text-5xl my-4">DIPLOMA</h1>
+                            <p class="diploma-text text-lg">Este certificado es otorgado a:</p>
+                            <p class="diploma-text text-4xl font-bold my-6" id="diploma-participant-name" style="font-family: 'Playfair Display', serif;"></p>
+                            <p class="diploma-text text-lg">Por haber completado exitosamente el curso:</p>
+                            <p class="diploma-text text-2xl font-bold my-4" id="diploma-course-title">""</p>
+                            <p class="diploma-text text-lg">Otorgado en la fecha:</p>
+                            <p class="diploma-text text-xl font-semibold" id="diploma-date"></p>
+                        </div>
+                        <div class="diploma-seal">
+                            <div class="diploma-seal-inner">CURSO APROBADO</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center mt-8 space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button id="download-diploma-btn" class="btn btn-primary">Descargar Diploma (PDF)</button>
+                    <button onclick="downloadResourcePdf()" class="btn btn-secondary">Descargar Material (PDF)</button>
+                    <button id="restart-course-btn" class="btn btn-secondary">Reiniciar Curso</button>
+                </div>
+            </div>
+
+            <div id="admin-panel" class="card screen hidden w-full max-w-4xl mx-auto p-6 md:p-8">
+                 <h2 class="text-2xl font-bold mb-6 text-center">Panel de Administración</h2>
+                 <button id="export-csv-btn" class="btn btn-primary mb-4">Exportar Aprobados (CSV)</button>
+                 <div class="overflow-x-auto">
+                     <table class="min-w-full bg-slate-800 rounded-lg shadow-md">
+                         <thead class="bg-slate-700 text-slate-300 uppercase text-sm leading-normal">
+                             <tr>
+                                 <th class="py-3 px-6 text-left">Nombre</th>
+                                 <th class="py-3 px-6 text-left">Apellido</th>
+                                 <th class="py-3 px-6 text-left">Email</th>
+                                 <th class="py-3 px-6 text-left">Score</th>
+                                 <th class="py-3 px-6 text-left">Fecha</th>
+                             </tr>
+                         </thead>
+                         <tbody id="approved-users-table-body" class="text-slate-400 text-sm font-light"></tbody>
+                     </table>
+                 </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- CONFIGURACIÓN ---
+        const SUPABASE_URL = 'https://zaxyokejvwupwmbhenso.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpheHlva2Vqdnd1cHdtYmhlbnNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI4NzMwNDYsImV4cCI6MjA2ODQ0OTA0Nn0.boNwgjYadjo6deO_YfKbLCGt0ug4H012D2KuhX0WZB8';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        const COURSE_TITLE = "Manual de Conducta del Colaborador";
+        // IMPORTANTE: Reemplaza la siguiente URL por la ubicación real del nuevo PDF.
+        const RESOURCE_PDF_URL = 'https://raw.githubusercontent.com/BLHTR/CursoSeguridad/main/Manual%20de%20Conducta%20del%20Colaborador.pdf';
+
+        // --- DATOS DEL CURSO ---
+        const chapters = [
+            { title: "Alcance del Manual", content: `<p><strong>Propósito del Manual:</strong> Este manual establece los principios mínimos que todos los colaboradores deben seguir al interactuar con BlatoRH Group en cualquier circunstancia.</p><p class="mt-4"><strong>Definición de Colaborador:</strong> Se refiere a cualquier persona relacionada con BlatoRH Group, incluyendo directores, asesores, empleados, contratistas y proveedores de servicios. Se espera que todos los miembros del equipo actúen de acuerdo con este manual.</p><p class="mt-4"><strong>Relación con el Contrato:</strong> Este manual se complementa con el contrato legal entre BlatoRH Group y el empleado. En caso de conflicto, las disposiciones del Contrato prevalecerán, a menos que la ley indique lo contrario. Es obligatorio leer y actuar conforme a este manual.</p>` },
+            { title: "Conducta, Integridad y Lucha Contra la Corrupción", content: `<p><strong>Principios Fundamentales:</strong> La integridad moral es esencial. Se debe actuar siempre con los más altos estándares éticos y cumplir con todas las leyes y regulaciones aplicables.</p><p class="mt-4"><strong>Lucha Contra la Corrupción:</strong> BlatoRH Group no tolera ninguna forma de soborno o corrupción. Está estrictamente prohibido:</p><ul class="list-disc list-inside ml-4 space-y-2"><li>Involucrarse en actividades que violen las leyes anticorrupción.</li><li>Ofrecer, prometer o pagar dinero, regalos u otros beneficios para obtener ventajas ilícitas.</li><li>Realizar pagos de facilitación para influir en acciones o decisiones.</li></ul><p class="mt-4"><strong>Trato Justo:</strong> Todos los colaboradores deben tratar a clientes, proveedores, competidores y otros empleados de manera justa y de buena fe.</p>` },
+            { title: "Conflicto de Intereses", content: `<p><strong>Obligación de Revelar:</strong> Los colaboradores tienen la obligación de revelar todos los conflictos de intereses, ya sean existentes o potenciales.</p><p class="mt-4"><strong>Situaciones de Conflicto:</strong> Un conflicto de interés puede surgir de relaciones comerciales o personales con clientes, proveedores, competidores de BlatoRH Group o con otros empleados de la empresa. La transparencia es clave para gestionar estas situaciones adecuadamente.</p>` },
+            { title: "Sostenibilidad y Medio Ambiente", content: `<p><strong>Compromiso Ambiental:</strong> Las consideraciones medioambientales son fundamentales. BlatoRH Group se compromete a operar con debido cuidado hacia el medio ambiente y a respetar toda la legislación ambiental vigente.</p><p class="mt-4"><strong>Responsabilidad del Colaborador:</strong> Los colaboradores deben cumplir con todas las leyes ambientales y asegurarse de obtener las autorizaciones y licencias necesarias de los órganos competentes para las operaciones que lo requieran.</p>` },
+            { title: "Secreto y Confidencialidad", content: `<p><strong>Protección de la Información:</strong> Los colaboradores deben cumplir estrictamente con todas las leyes y regulaciones para la protección, uso y divulgación de información personal y confidencial propiedad de BlatoRH Group.</p><p class="mt-4"><strong>Prohibiciones Clave:</strong></p><ul class="list-disc list-inside ml-4 space-y-2"><li>No se permite revelar información confidencial a terceros no autorizados.</li><li>No se puede utilizar información confidencial para satisfacer intereses personales o de terceros.</li><li>Se debe proteger la información confidencial de terceros, no pudiendo usarla o revelarla, a menos que ya sea pública.</li></ul>` },
+            { title: "Protección de Datos", content: `<p><strong>Conocimiento Normativo:</strong> Los colaboradores deben estar familiarizados con las regulaciones y políticas de protección de datos aplicables en Argentina, incluyendo la Política de Protección de Datos interna de BlatoRH Group.</p><p class="mt-4"><strong>Divulgación de Datos:</strong> Los datos personales y confidenciales nunca deben divulgarse a terceros fuera de BlatoRH Group sin la debida autorización y cumplimiento de la ley.</p>` },
+            { title: "Cumplimiento del Manual y Consecuencias", content: `<p><strong>Obligación de Cumplimiento:</strong> Todos los colaboradores de BlatoRH Group, sin excepción, deben cumplir con este Manual.</p><p class="mt-4"><strong>Consecuencias del Incumplimiento:</strong> El incumplimiento de los principios aquí establecidos es una falta grave y puede resultar en la <strong>terminación del contrato</strong> específico entre BlatoRH Group y el colaborador por justa causa.</p><p class="mt-4">Además, el incumplimiento puede acarrear la aplicación de las multas correspondientes y la exigencia de indemnización por las pérdidas y daños ocasionados a BlatoRH Group.</p>` }
+        ];
+
+        const quizQuestions = [
+            { question: "¿A quiénes aplica el Manual de Conducta del Colaborador?", options: ["Solo a los directores y gerentes.", "Solo a los empleados de tiempo completo.", "A cualquier persona relacionada con BlatoRH Group (empleados, contratistas, asesores, etc.).", "Solo a los nuevos empleados."], answer: 2 },
+            { question: "¿Según el manual, qué debe hacer un colaborador si enfrenta un posible conflicto de intereses?", options: ["Ignorarlo si no parece grave.", "Consultarlo únicamente con un compañero de trabajo.", "Revelar todos los conflictos de intereses, existentes o potenciales.", "Esperar a que un supervisor lo detecte."], answer: 2 },
+            { question: "¿Qué postura tiene BlatoRH Group frente al soborno y la corrupción?", options: ["Se permiten pequeños pagos para agilizar trámites.", "No tolera ninguna forma de soborno o corrupción.", "Depende de la situación y el país.", "Es responsabilidad exclusiva del departamento legal."], answer: 1 },
+            { question: "¿Qué puede ocurrir si un colaborador incumple los principios del Manual de Conducta?", options: ["Recibirá una advertencia verbal únicamente.", "Nada, si el impacto no es financiero.", "Puede resultar en la terminación del contrato por justa causa y multas.", "Se le asignará un curso de capacitación adicional."], answer: 2 },
+            { question: "¿Está permitido revelar información confidencial de BlatoRH Group a un amigo o familiar?", options: ["Sí, si se confía en la persona.", "No, no se permite revelar información confidencial a terceros no autorizados.", "Sí, siempre que no se compartan datos financieros.", "Solo si la información parece inofensiva."], answer: 1 }
+        ];
+        
+        // --- ELEMENTOS DEL DOM ---
+        const domElements = {
+            appHeader: document.getElementById('app-header'),
+            screens: {
+                login: document.getElementById('login-screen'),
+                course: document.getElementById('course-screen'),
+                quiz: document.getElementById('quiz-screen'),
+                result: document.getElementById('result-screen'),
+                diploma: document.getElementById('diploma-screen'),
+                admin: document.getElementById('admin-panel'),
+            },
+            loginForm: document.getElementById('login-form'),
+            loginSubmitBtn: document.getElementById('login-submit-btn'),
+            nameInput: document.getElementById('name'),
+            surnameInput: document.getElementById('surname'),
+            emailInput: document.getElementById('email'),
+            loginCourseTitle: document.getElementById('login-course-title'),
+            loginCourseTitleMobile: document.getElementById('login-course-title-mobile'),
+            courseDurationEstimate: document.getElementById('course-duration-estimate'),
+            chapterNumber: document.getElementById('chapter-number'),
+            progressBar: document.getElementById('progress-bar'),
+            chapterTitle: document.getElementById('chapter-title'),
+            chapterContent: document.getElementById('chapter-content'),
+            listenBtn: document.getElementById('listen-btn'),
+            nextBtn: document.getElementById('next-btn'),
+            quizProgressBar: document.getElementById('quiz-progress-bar'),
+            quizContent: document.getElementById('quiz-content'),
+            prevQuestionBtn: document.getElementById('prev-question-btn'),
+            nextQuestionBtn: document.getElementById('next-question-btn'),
+            submitQuizBtn: document.getElementById('submit-quiz-btn'),
+            resultScore: document.getElementById('result-score'),
+            resultMessage: document.getElementById('result-message'),
+            resultSummary: document.getElementById('result-summary'),
+            restartQuizBtn: document.getElementById('restart-quiz-btn'),
+            diplomaBtn: document.getElementById('diploma-btn'),
+            diplomaCourseTitle: document.getElementById('diploma-course-title'),
+            diplomaParticipantName: document.getElementById('diploma-participant-name'),
+            diplomaDate: document.getElementById('diploma-date'),
+            downloadDiplomaBtn: document.getElementById('download-diploma-btn'),
+            restartCourseBtn: document.getElementById('restart-course-btn'),
+            exportCsvBtn: document.getElementById('export-csv-btn'),
+            approvedUsersTableBody: document.getElementById('approved-users-table-body'),
+            messageBox: document.getElementById('message-box'),
+            messageText: document.getElementById('message-text'),
+            diplomaLoading: document.getElementById('diploma-loading'),
+        };
+
+        // --- ESTADO DE LA APLICACIÓN ---
+        let state = {
+            currentUser: null,
+            currentChapterIndex: 0,
+            currentQuestionIndex: 0,
+            speechQueue: [],
+            wasManuallyStopped: false,
+            selectedVoice: null,
+            userAnswers: new Array(quizQuestions.length).fill(null),
+            autoPlayTimeout: null,
+        };
+
+        // --- FUNCIONES PRINCIPALES ---
+        function showScreen(screenName) {
+            Object.values(domElements.screens).forEach(screen => screen && screen.classList.add('hidden'));
+            if (domElements.screens[screenName]) domElements.screens[screenName].classList.remove('hidden');
+            domElements.appHeader.classList.toggle('hidden', screenName === 'login');
+        }
+
+        function showMessage(message, type = 'error') {
+            domElements.messageText.textContent = message;
+            domElements.messageBox.className = `fixed top-5 left-1/2 -translate-x-1/2 mt-4 p-4 rounded-lg shadow-lg text-white z-50 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+            domElements.messageBox.classList.remove('hidden');
+            setTimeout(() => domElements.messageBox.classList.add('hidden'), 5000);
+        }
+
+        async function saveUserProgressToSupabase(user) {
+            const { error } = await supabaseClient
+                .from('users_progress')
+                .upsert(user, { onConflict: 'id' });
+            if (error) {
+                console.error('Error guardando progreso:', error.message);
+                showMessage('Error guardando progreso: ' + error.message, 'error');
+            }
+        }
+
+        function updateProgressBar() {
+            const progress = ((state.currentChapterIndex + 1) / chapters.length) * 100;
+            domElements.progressBar.style.width = `${progress}%`;
+            if (state.currentUser) {
+                state.currentUser.progress = state.currentChapterIndex;
+                saveUserProgressToSupabase(state.currentUser);
+            }
+        }
+        
+        function calculateCourseDuration() {
+            const totalWords = chapters.reduce((acc, chapter) => {
+                const strippedContent = chapter.content.replace(/<[^>]*>/g, '');
+                return acc + strippedContent.split(/\s+/).length;
+            }, 0);
+            const readingTime = Math.ceil(totalWords / 180); // Avg reading speed
+            const quizTime = Math.ceil(quizQuestions.length * 0.75); // Avg quiz time
+            return readingTime + quizTime;
+        }
+        
+        function loadChapter() {
+            if (state.autoPlayTimeout) clearTimeout(state.autoPlayTimeout);
+            
+            if (state.currentChapterIndex < chapters.length) {
+                const chapter = chapters[state.currentChapterIndex];
+                domElements.chapterNumber.textContent = `Capítulo ${state.currentChapterIndex + 1} de ${chapters.length}`;
+                domElements.chapterTitle.textContent = chapter.title;
+                domElements.chapterContent.innerHTML = chapter.content;
+                
+                domElements.nextBtn.disabled = true;
+                domElements.nextBtn.classList.remove('pulsing-button');
+                domElements.listenBtn.textContent = "Escuchar Audio";
+                
+                updateProgressBar();
+
+                state.autoPlayTimeout = setTimeout(handleListen, 7000);
+            } else {
+                startQuiz();
+            }
+        }
+        
+        function loadAndSetVoice() {
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length === 0) return;
+
+            let preferredVoice;
+
+            // 1. Prioritize Argentine Male voice
+            preferredVoice = voices.find(v => v.lang === 'es-AR' && (v.name.includes('Male') || v.name.includes('Hombre')));
+            
+            // 2. Fallback to any Argentine voice
+            if (!preferredVoice) {
+                preferredVoice = voices.find(v => v.lang === 'es-AR');
+            }
+
+            // 3. Fallback to any Spanish Male voice
+            if (!preferredVoice) {
+                preferredVoice = voices.find(v => v.lang.startsWith('es-') && (v.name.includes('Male') || v.name.includes('Hombre')));
+            }
+            
+            // 4. Fallback to any Spanish voice
+            if (!preferredVoice) {
+                preferredVoice = voices.find(v => v.lang.startsWith('es-'));
+            }
+
+            state.selectedVoice = preferredVoice;
+        }
+
+        function speakNextInQueue() {
+            if (state.wasManuallyStopped || state.speechQueue.length === 0) {
+                domElements.listenBtn.textContent = "Escuchar Audio";
+                if (!state.wasManuallyStopped) {
+                    domElements.nextBtn.disabled = false;
+                    domElements.nextBtn.classList.add('pulsing-button');
+                }
+                state.speechQueue = [];
+                return;
+            }
+            const { utterance } = state.speechQueue.shift();
+            if (state.selectedVoice) utterance.voice = state.selectedVoice;
+            utterance.onend = speakNextInQueue;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function handleListen() {
+            if (state.autoPlayTimeout) clearTimeout(state.autoPlayTimeout);
+
+            const synth = window.speechSynthesis;
+            if (synth.speaking && !synth.paused) {
+                synth.pause();
+                domElements.listenBtn.textContent = "Reanudar Audio";
+                return;
+            }
+            if (synth.paused) {
+                synth.resume();
+                domElements.listenBtn.textContent = "Detener Audio";
+                return;
+            }
+
+            domElements.listenBtn.textContent = "Detener Audio";
+            state.wasManuallyStopped = false;
+            state.speechQueue = [];
+            const elementsToRead = [domElements.chapterTitle, ...domElements.chapterContent.children];
+
+            elementsToRead.forEach(element => {
+                const text = element.textContent.trim();
+                if (text) {
+                    const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
+                    sentences.forEach(sentenceText => {
+                        const trimmedSentence = sentenceText.trim();
+                        if (trimmedSentence) {
+                            const utterance = new SpeechSynthesisUtterance(trimmedSentence);
+                            utterance.lang = 'es-AR'; // Prioritize Argentine Spanish
+                            state.speechQueue.push({ utterance });
+                        }
+                    });
+                }
+            });
+            speakNextInQueue();
+        }
+
+        function startQuiz() {
+            showScreen('quiz');
+            state.currentQuestionIndex = 0;
+            state.userAnswers = new Array(quizQuestions.length).fill(null);
+            renderQuestion();
+        }
+        
+        function renderQuestion() {
+            const q = quizQuestions[state.currentQuestionIndex];
+            domElements.quizContent.innerHTML = `
+                <p class="font-semibold text-xl text-center text-slate-200 mb-8">${state.currentQuestionIndex + 1}. ${q.question}</p>
+                <div class="flex flex-col space-y-4">
+                    ${q.options.map((option, index) => `
+                        <button class="quiz-option" data-answer-index="${index}">
+                            <span class="text-amber-400 font-bold mr-4">${String.fromCharCode(65 + index)}</span>
+                            <span class="flex-1">${option}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            domElements.quizContent.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const selectedIndex = parseInt(e.currentTarget.dataset.answerIndex);
+                    state.userAnswers[state.currentQuestionIndex] = selectedIndex;
+                    domElements.quizContent.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+                    e.currentTarget.classList.add('selected');
+                    updateQuizNavigation();
+                });
+            });
+
+            if (state.userAnswers[state.currentQuestionIndex] !== null) {
+                const selectedBtn = domElements.quizContent.querySelector(`.quiz-option[data-answer-index="${state.userAnswers[state.currentQuestionIndex]}"]`);
+                if (selectedBtn) selectedBtn.classList.add('selected');
+            }
+
+            updateQuizNavigation();
+            updateQuizProgressBar();
+        }
+
+        function updateQuizNavigation() {
+            domElements.prevQuestionBtn.style.visibility = state.currentQuestionIndex === 0 ? 'hidden' : 'visible';
+            const isLastQuestion = state.currentQuestionIndex === quizQuestions.length - 1;
+            domElements.nextQuestionBtn.classList.toggle('hidden', isLastQuestion);
+            domElements.submitQuizBtn.classList.toggle('hidden', !isLastQuestion);
+            
+            const answerSelected = state.userAnswers[state.currentQuestionIndex] !== null;
+            domElements.nextQuestionBtn.disabled = !answerSelected;
+            domElements.submitQuizBtn.disabled = !answerSelected;
+        }
+
+        function updateQuizProgressBar() {
+            const progress = ((state.currentQuestionIndex + 1) / quizQuestions.length) * 100;
+            domElements.quizProgressBar.style.width = `${progress}%`;
+        }
+        
+        async function submitQuiz() {
+            const correctAnswers = state.userAnswers.reduce((acc, answer, index) => acc + (answer === quizQuestions[index].answer ? 1 : 0), 0);
+            const score = Math.round((correctAnswers / quizQuestions.length) * 100);
+            
+            if (state.currentUser) {
+                state.currentUser.quiz_score = score;
+                state.currentUser.completed_date = new Date().toLocaleDateString('es-AR');
+                state.currentUser.approved = score >= 80;
+                await saveUserProgressToSupabase(state.currentUser);
+            }
+            showResultScreen(score);
+        }
+        
+        function showResultScreen(score) {
+            showScreen('result');
+            domElements.resultScore.textContent = `${score}%`;
+            domElements.resultMessage.textContent = score >= 80 ? '¡Excelente! Has aprobado.' : 'Necesitas repasar. ¡Inténtalo de nuevo!';
+            domElements.diplomaBtn.classList.toggle('hidden', score < 80);
+            domElements.resultSummary.innerHTML = quizQuestions.map((q, i) => {
+                const isCorrect = state.userAnswers[i] === q.answer;
+                return `<div class="flex items-center text-sm ${isCorrect ? 'text-green-400' : 'text-red-400'}">
+                    <svg class="w-5 h-5 mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20">${isCorrect ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />' : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />'}</svg>
+                    <span>Pregunta ${i+1}: ${isCorrect ? 'Correcta' : 'Incorrecta'}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function updateDiplomaContent() {
+             if (state.currentUser) {
+                domElements.diplomaCourseTitle.textContent = `"${COURSE_TITLE}"`;
+                domElements.diplomaParticipantName.textContent = `${state.currentUser.name || ''} ${state.currentUser.surname || ''}`.trim();
+                domElements.diplomaDate.textContent = state.currentUser.completed_date;
+            }
+        }
+
+        async function downloadDiploma() {
+            domElements.diplomaLoading.classList.remove('hidden');
+            domElements.downloadDiplomaBtn.disabled = true;
+            
+            const { jsPDF } = window.jspdf;
+            const diplomaContentEl = document.getElementById('diploma-content');
+            try {
+                const canvas = await html2canvas(diplomaContentEl, { scale: 3, backgroundColor: '#fdfbf4' });
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [canvas.width, canvas.height] });
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                const safeCourseTitle = COURSE_TITLE.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                pdf.save(`Diploma_${state.currentUser.name}_${state.currentUser.surname}_${safeCourseTitle}.pdf`);
+            } catch (error) {
+                showMessage('Error al generar el diploma en PDF.', 'error');
+            } finally {
+                domElements.diplomaLoading.classList.add('hidden');
+                domElements.downloadDiplomaBtn.disabled = false;
+            }
+        }
+        
+        function restartCourse(fullRestart = true) {
+             if (fullRestart) {
+                localStorage.removeItem('blatorh_course_email');
+                localStorage.removeItem('blatorh_course_title');
+                state.currentUser = null;
+                window.location.reload();
+             } else {
+                startQuiz();
+             }
+        }
+        
+        async function loadApprovedUsers() {
+            const { data: users, error } = await supabaseClient
+                .from('users_progress')
+                .select('*')
+                .eq('approved', true)
+                .eq('course_title', COURSE_TITLE);
+
+            if (error) {
+                showMessage('Error cargando usuarios aprobados.', 'error');
+                return;
+            }
+
+            domElements.approvedUsersTableBody.innerHTML = '';
+            if (users.length === 0) {
+                domElements.approvedUsersTableBody.innerHTML = '<tr><td colspan="5" class="py-3 px-6 text-center">No hay usuarios aprobados para este curso.</td></tr>';
+                return;
+            }
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-slate-700 hover:bg-slate-700';
+                row.innerHTML = `
+                    <td class="py-3 px-6 text-left whitespace-nowrap">${user.name || ''}</td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">${user.surname || ''}</td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">${user.email}</td>
+                    <td class="py-3 px-6 text-left">${user.quiz_score ? user.quiz_score.toFixed(0) + '%' : 'N/A'}</td>
+                    <td class="py-3 px-6 text-left whitespace-nowrap">${user.completed_date || 'N/A'}</td>
+                `;
+                domElements.approvedUsersTableBody.appendChild(row);
+            });
+        }
+        
+        function exportApprovedUsersToCsv() {
+            const users = Array.from(domElements.approvedUsersTableBody.rows).map(row => ({
+                name: row.cells[0].textContent,
+                surname: row.cells[1].textContent,
+                email: row.cells[2].textContent,
+                score: row.cells[3].textContent,
+                completedDate: row.cells[4].textContent
+            }));
+
+            if (users.length === 0 || users[0].name.includes('No hay usuarios')) {
+                showMessage('No hay usuarios aprobados para exportar.', 'error');
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Nombre,Apellido,Email,Score,Fecha de Finalización\n";
+            users.forEach(user => {
+                const row = [user.name, user.surname, user.email, user.score, user.completedDate].map(item => `"${item}"`).join(",");
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `aprobados_${COURSE_TITLE.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function downloadResourcePdf() {
+            window.open(RESOURCE_PDF_URL, '_blank');
+        }
+
+        // --- INICIALIZACIÓN Y EVENTOS ---
+        async function initializeApp() {
+            // Configurar títulos
+            domElements.loginCourseTitle.textContent = COURSE_TITLE;
+            domElements.loginCourseTitleMobile.textContent = COURSE_TITLE;
+            domElements.diplomaCourseTitle.textContent = `"${COURSE_TITLE}"`;
+            domElements.courseDurationEstimate.textContent = `Duración: ${calculateCourseDuration()} min`;
+
+            if ('speechSynthesis' in window) {
+                // Las voces a menudo se cargan de forma asíncrona.
+                if (speechSynthesis.onvoiceschanged !== undefined) {
+                    speechSynthesis.onvoiceschanged = loadAndSetVoice;
+                }
+                loadAndSetVoice();
+            }
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('admin') === 'true') {
+                showScreen('admin');
+                loadApprovedUsers();
+                return;
+            }
+            
+            const storedEmail = localStorage.getItem('blatorh_course_email');
+            const storedCourseTitle = localStorage.getItem('blatorh_course_title');
+
+            if (storedEmail && storedCourseTitle === COURSE_TITLE) {
+                try {
+                    const { data: user, error } = await supabaseClient
+                        .from('users_progress')
+                        .select('*')
+                        .eq('email', storedEmail)
+                        .eq('course_title', COURSE_TITLE)
+                        .single();
+
+                    if (error && error.code !== 'PGRST116') throw error;
+
+                    if (user) {
+                        state.currentUser = user;
+                        if (user.approved) {
+                            showScreen('diploma');
+                            updateDiplomaContent();
+                        } else {
+                            showScreen('course');
+                            state.currentChapterIndex = user.progress || 0;
+                            loadChapter();
+                        }
+                    } else {
+                        localStorage.removeItem('blatorh_course_email');
+                        localStorage.removeItem('blatorh_course_title');
+                        showScreen('login');
+                    }
+                } catch (err) {
+                    showMessage('Error al cargar tu progreso. Por favor, inicia sesión de nuevo.', 'error');
+                    localStorage.clear();
+                    showScreen('login');
+                }
+            } else {
+                showScreen('login');
+            }
+        }
+        
+        domElements.loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = domElements.loginSubmitBtn;
+            btn.disabled = true;
+            btn.querySelector('.btn-text').classList.add('hidden');
+            btn.querySelector('.btn-loader').classList.remove('hidden');
+
+            const name = domElements.nameInput.value.trim();
+            const surname = domElements.surnameInput.value.trim();
+            const email = domElements.emailInput.value.trim();
+
+            try {
+                const { data: existingUser, error } = await supabaseClient
+                    .from('users_progress')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('course_title', COURSE_TITLE)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') throw error;
+
+                if (existingUser) {
+                    state.currentUser = { ...existingUser, name, surname };
+                } else {
+                    state.currentUser = {
+                        id: crypto.randomUUID(),
+                        name, surname, email,
+                        course_title: COURSE_TITLE,
+                        progress: 0,
+                        quiz_score: null,
+                        completed_date: null,
+                        approved: false
+                    };
+                }
+
+                await saveUserProgressToSupabase(state.currentUser);
+                localStorage.setItem('blatorh_course_email', email);
+                localStorage.setItem('blatorh_course_title', COURSE_TITLE);
+
+                if (state.currentUser.approved) {
+                    showScreen('diploma');
+                    updateDiplomaContent();
+                } else {
+                    showScreen('course');
+                    state.currentChapterIndex = state.currentUser.progress || 0;
+                    loadChapter();
+                }
+            } catch (err) {
+                showMessage(`Error en el ingreso: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.querySelector('.btn-text').classList.remove('hidden');
+                btn.querySelector('.btn-loader').classList.add('hidden');
+            }
+        });
+
+        domElements.listenBtn.addEventListener('click', handleListen);
+        
+        domElements.nextBtn.addEventListener('click', () => { 
+            if (window.speechSynthesis.speaking) {
+                state.wasManuallyStopped = true;
+                window.speechSynthesis.cancel();
+            }
+            state.currentChapterIndex++; 
+            loadChapter(); 
+        });
+
+        domElements.prevQuestionBtn.addEventListener('click', () => { 
+            if(state.currentQuestionIndex > 0) { 
+                state.currentQuestionIndex--; 
+                renderQuestion(); 
+            } 
+        });
+
+        domElements.nextQuestionBtn.addEventListener('click', () => { 
+            if(state.userAnswers[state.currentQuestionIndex] !== null && state.currentQuestionIndex < quizQuestions.length - 1) { 
+                state.currentQuestionIndex++; 
+                renderQuestion(); 
+            }
+        });
+
+        domElements.submitQuizBtn.addEventListener('click', submitQuiz);
+        domElements.restartQuizBtn.addEventListener('click', () => restartCourse(false));
+        domElements.diplomaBtn.addEventListener('click', () => { showScreen('diploma'); updateDiplomaContent(); });
+        domElements.downloadDiplomaBtn.addEventListener('click', downloadDiploma);
+        domElements.restartCourseBtn.addEventListener('click', () => restartCourse(true));
+        domElements.exportCsvBtn.addEventListener('click', exportApprovedUsersToCsv);
+        
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
